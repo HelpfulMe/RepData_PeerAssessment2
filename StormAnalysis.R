@@ -34,14 +34,13 @@ elapsed <- proc.time() - ptm
 ##------------------------------------------------------------------------------
 # Preprocessing data
 
-# add each entry's injury, fatality, and damage vectors-
-# can ID records we are interested in
-stormData$HARMFUL <- rowSums(stormData[, c("FATALITIES", "INJURIES", "CROPDMG",
-                                           "PROPDMG")])
+# create dataframe with only events that had health or damage consequence
+df <- subset(stormData, (rowSums(
+    stormData[, c("FATALITIES", "INJURIES", "CROPDMG","PROPDMG")]))>0,
+    select = c(EVTYPE, FATALITIES, INJURIES, PROPDMG, PROPDMGEXP, CROPDMG,
+               CROPDMGEXP, REMARKS, REFNUM))
 
-
-
-# Official EVTYPES - 48 types in the Storm Data Event Table, pg 6 of
+# Official EVTYPES - types in the Storm Data Event Table, pg 6 of
 # https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf
 EVT <- c('Astronomical Low Tide','Avalanche','Blizzard','Coastal Flood',
               'Cold/Wind Chill','Debris Flow','Dense Fog','Dense Smoke',
@@ -59,8 +58,8 @@ EVT <- c('Astronomical Low Tide','Avalanche','Blizzard','Coastal Flood',
 
 # subset data for just events causing propety damage, and events causing
 # health consequences
-DMG <- subset(stormData, (rowSums(stormData[, c("CROPDMG", "PROPDMG")])) > 0)
-HLTH <- subset(stormData, (rowSums(stormData[, c("INJURIES", "FATALITIES")]))>0)
+DMG <- subset(df, (rowSums(df[, c("CROPDMG", "PROPDMG")])) > 0)
+HLTH <- subset(df, (rowSums(df[, c("INJURIES", "FATALITIES")]))>0)
 
 
 
