@@ -4,7 +4,7 @@
 ## Peer Graded Assignment 2
 ## Date: October 2, 2016
 ##------------------------------------------------------------------------------
-### Loading and preprocessing the data
+### Loading the data
 
 # Start the clock!
 ptm <- proc.time()
@@ -20,24 +20,7 @@ if(!file.exists("repdata%2Fdata%2FStormData.csv.bz2")) {
 
 # See if data read into R.  If not, read it.
 if(!exists('stormData')){
-    # Set column classes
-    # Classes decided by:
-    # reading in entire dataframe (reading in partial produced
-    #       classes that didn't work),
-    # classes <- sapply(stormData, class) # to get classes of dataframe
-    # unname(classes) # to remove the names from the classes vector
-    # paste("'", classes, "'", sep="", collapse = ", ") # to print comma
-    # # separated list to the console that could paste into classes assignment
-    # # below
-    classes <- c('numeric', 'character', 'character', 'character', 'numeric',
-                 'character', 'character', 'character', 'numeric', 'character',
-                 'character', 'character', 'character', 'numeric', 'logical',
-                 'numeric', 'character', 'character', 'numeric', 'numeric',
-                 'integer', 'numeric', 'numeric', 'numeric', 'numeric',
-                 'character', 'numeric', 'character', 'character', 'character',
-                 'character', 'numeric', 'numeric', 'numeric', 'numeric',
-                 'character', 'numeric')
-
+    # Unsuccessful at setting colclasses for import, just importing regularly
     # read data
     stormData <- read.csv("repdata%2Fdata%2FStormData.csv.bz2", header = TRUE,
                           stringsAsFactors = FALSE, na.strings = "NA")
@@ -45,8 +28,21 @@ if(!exists('stormData')){
 
 # Stop the clock
 elapsed <- proc.time() - ptm
-# no colclasses   = user - 174.04, system = 10.75, elapsed = 13830.68
-# with colclasses = user - 268.75, system = 11.78, elapsed = 14890.06
-# it takes longer to read in the file with colclasses?!
+# no colclasses = user - 174.04, system = 10.75, elapsed = 13830.68
+# no colclasses = user - 268.75, system = 11.78, elapsed = 14890.06
+
+##------------------------------------------------------------------------------
+# Preprocessing data
+
+# add each entry's injury, fatality, and damage vectors-
+# can ID records we are interested in
+stormData$HARMFUL <- rowSums(stormData[, c("FATALITIES", "INJURIES", "CROPDMG",
+                                           "PROPDMG")])
+# subset data for just events causing propety damage, and events causing
+# health consequences
+DMG <- subset(stormData, (rowSums(stormData[, c("CROPDMG", "PROPDMG")])) > 0)
+HLTH <- subset(stormData, (rowSums(stormData[, c("INJURIES", "FATALITIES")]))>0)
 
 
+# EVTYPES - limited to those in the Storm Data Event Table, pg 6 of
+# https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf
