@@ -21,21 +21,32 @@ if(!file.exists("repdata%2Fdata%2FStormData.csv.bz2")) {
 # See if data read into R.  If not, read it.
 if(!exists('stormData')){
     # Set column classes
-    # not setting date formats - not going to use them for this code
-    classes <- c("numeric", "character", "character", "character", "numeric",
-                 "character", "character", "character", "numeric", "character",
-                 "character", "character", "character", "numeric", "logical",
-                 "numeric", "character", "character", "numeric", "numeric",
-                 "integer", "numeric", "numeric", "numeric", "numeric",
-                 "character", "numeric", "character", "character", "character",
-                 "character", "numeric","numeric", "numeric", "numeric",
-                 "character", "numeric")
+    # Classes decided by:
+    # reading in entire dataframe (reading in partial produced
+    #       classes that didn't work),
+    # classes <- sapply(stormData, class) # to get classes of dataframe
+    # unname(classes) # to remove the names from the classes vector
+    # paste("'", classes, "'", sep="", collapse = ", ") # to print comma
+    # # separated list to the console that could paste into classes assignment
+    # # below
+    classes <- c('numeric', 'character', 'character', 'character', 'numeric',
+                 'character', 'character', 'character', 'numeric', 'character',
+                 'character', 'character', 'character', 'numeric', 'logical',
+                 'numeric', 'character', 'character', 'numeric', 'numeric',
+                 'integer', 'numeric', 'numeric', 'numeric', 'numeric',
+                 'character', 'numeric', 'character', 'character', 'character',
+                 'character', 'numeric', 'numeric', 'numeric', 'numeric',
+                 'character', 'numeric')
+
     # read data
     stormData <- read.csv("repdata%2Fdata%2FStormData.csv.bz2", header = TRUE,
-                          colClasses = classes, stringsAsFactors = FALSE,
-                          na.strings = "NA")
+                          stringsAsFactors = FALSE, na.strings = "NA")
 }
 
 # Stop the clock
 elapsed <- proc.time() - ptm
+# no colclasses   = user - 174.04, system = 10.75, elapsed = 13830.68
+# with colclasses = user - 268.75, system = 11.78, elapsed = 14890.06
+# it takes longer to read in the file with colclasses?!
+
 
