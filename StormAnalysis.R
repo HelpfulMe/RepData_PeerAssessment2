@@ -55,11 +55,34 @@ EVT <- c('Astronomical Low Tide','Avalanche','Blizzard','Coastal Flood',
               'Tropical Depression','Tropical Storm','Tsunami','Volcanic Ash',
               'Waterspout','Wildfire','Winter Storm','Winter Weather')
 
+# create second vector for event types without punctuation or captialization
+EVT2 <- tolower(EVT)
+# remove spaces and punctuation
+EVT2 <- gsub("[^[:alnum:]]", "", EVT2)
+# combine the EVT vectors
+EVT <- cbind.data.frame(EVT, EVT2, stringsAsFactors = FALSE)
 
-# subset data for just events causing propety damage, and events causing
-# health consequences
-DMG <- subset(df, (rowSums(df[, c("CROPDMG", "PROPDMG")])) > 0)
-HLTH <- subset(df, (rowSums(df[, c("INJURIES", "FATALITIES")]))>0)
 
-
+# # remove whitespace around EVTYPE
+# df$EVTYPE <- trimws(df$EVTYPE)
+#
+# # making new dataframe with semi-exact matches of EVTYPE to the official EVT
+# df2 <- df[(grep(paste(EVT,collapse="|"), df$EVTYPE, ignore.case = TRUE,
+#                 value = FALSE)), ]
+#
+#
+# # add 'EVT' to df to hold official event category
+# # if exact match except for case:
+# # df$EVT <- trimws(df$EVTYPE)
+#
+#
+# # subset data for just events causing propety damage, and events causing
+# # health consequences
+# DMG <- subset(df, (rowSums(df[, c("CROPDMG", "PROPDMG")])) > 0)
+# HLTH <- subset(df, (rowSums(df[, c("INJURIES", "FATALITIES")]))>0)
+#
+#
+# Stop the clock
+elapsed <- proc.time() - ptm
+# no colclasses, loading data only: user = 174.04, system = 10.75, elapsed = 13830.68
 
