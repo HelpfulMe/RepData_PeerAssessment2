@@ -38,11 +38,29 @@ elapsed <- proc.time() - ptm
 # can ID records we are interested in
 stormData$HARMFUL <- rowSums(stormData[, c("FATALITIES", "INJURIES", "CROPDMG",
                                            "PROPDMG")])
+
+
+
+# Official EVTYPES - 48 types in the Storm Data Event Table, pg 6 of
+# https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf
+EVT <- c('Astronomical Low Tide','Avalanche','Blizzard','Coastal Flood',
+              'Cold/Wind Chill','Debris Flow','Dense Fog','Dense Smoke',
+              'Drought','Dust Devil','Dust Storm','Excessive Heat',
+              'Extreme Cold/Wind Chill','Flash Flood','Flood','Frost/Freeze',
+              'Funnel Cloud','Freezing Fog','Hail','Heat','Heavy Rain',
+              'Heavy Snow','High Surf','High Wind','Hurricane (Typhoon)',
+              'Ice Storm','Lake-Effect Snow','Lakeshore Flood','Lightning',
+              'Marine Hail','Marine High Wind','Marine Strong Wind',
+              'Marine Thunderstorm Wind','Rip Current','Seiche','Sleet',
+              'Storm Surge/Tide','Strong Wind','Thunderstorm Wind','Tornado',
+              'Tropical Depression','Tropical Storm','Tsunami','Volcanic Ash',
+              'Waterspout','Wildfire','Winter Storm','Winter Weather')
+
+
 # subset data for just events causing propety damage, and events causing
 # health consequences
 DMG <- subset(stormData, (rowSums(stormData[, c("CROPDMG", "PROPDMG")])) > 0)
 HLTH <- subset(stormData, (rowSums(stormData[, c("INJURIES", "FATALITIES")]))>0)
 
 
-# EVTYPES - limited to those in the Storm Data Event Table, pg 6 of
-# https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf
+
