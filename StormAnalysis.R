@@ -114,16 +114,48 @@ df <- merge(x=df, y=EVT, by.x = "EVTYPE2", by.y = "EVT2", all.x = TRUE)
 #-------------------------------------------------------------------------------
 # Cleaning event types - find events, assign them cleaned up event types
 
-# # "Storm Surge/Tide"
-# index <- grep("stormsurge", df$EVTYPE2, ignore.case = TRUE)
-# df$EVT[index] <- "Storm Surge/Tide"
-#
-# # "Hurricane (Typhoon)"
-# index <- grep("hurri", df$EVTYPE2, ignore.case = TRUE)
-# df$EVT[index] <- ("Hurricane (Typhoon)")
-#
-# index <- grep("typhoon", df$EVTYPE2, ignore.case = TRUE)
-# df$EVT[index] <- ("Hurricane (Typhoon)")
+# "Storm Surge/Tide",
+# Find events with the search term in their EVTYPE2 vector that also have NA
+# for EVT (cleaned up event type)
+index <- intersect(grep("stormsurge", df$EVTYPE2, ignore.case = TRUE),
+    which(is.na(df$EVT)))
+# and assign them the cleaned up event type
+df$EVT[index] <- "Storm Surge/Tide"
+
+# "Hurricane (Typhoon)"
+index <- intersect(grep("hurri", df$EVTYPE2, ignore.case = TRUE),
+                   which(is.na(df$EVT)))
+df$EVT[index] <- ("Hurricane (Typhoon)")
+
+index <- intersect(grep("typhoon", df$EVTYPE2, ignore.case = TRUE),
+                   which(is.na(df$EVT)))
+df$EVT[index] <- ("Hurricane (Typhoon)")
+
+# "Hurricane (Typhoon)"
+index <- intersect(grep("hurri", df$EVTYPE2, ignore.case = TRUE),
+                   which(is.na(df$EVT)))
+df$EVT[index] <- ("Hurricane (Typhoon)")
+
+# "Flash Flood"
+index <- intersect(grep("flashflood", df$EVTYPE2, ignore.case = TRUE),
+                   which(is.na(df$EVT)))
+df$EVT[index] <- ("Flash Flood")
+
+# "Coastal Flood"
+index <- intersect(grep("coastalflood", df$EVTYPE2, ignore.case = TRUE),
+                   which(is.na(df$EVT)))
+df$EVT[index] <- ("Coastal Flood")
+
+# "Flood"
+index <- intersect(grep("flood", df$EVTYPE2, ignore.case = TRUE),
+                   which(is.na(df$EVT)))
+df$EVT[index] <- ("Flood")
+
+# "Thunderstorm Wind"
+index <- intersect(grep("thunderstormw", df$EVTYPE2, ignore.case = TRUE),
+                   which(is.na(df$EVT)))
+df$EVT[index] <- ("Thunderstorm Wind")
+
 
 # events that need categories
 x <- subset(df, is.na(df$EVT))
