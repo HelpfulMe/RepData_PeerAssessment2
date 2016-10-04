@@ -26,19 +26,61 @@ if(!exists('stormData')){
                           stringsAsFactors = FALSE, na.strings = "NA")
 }
 
-# Stop the clock
-elapsed <- proc.time() - ptm
-# no colclasses = user - 174.04, system = 10.75, elapsed = 13830.68
-# no colclasses = user - 268.75, system = 11.78, elapsed = 14890.06
-
 ##------------------------------------------------------------------------------
 # Preprocessing data
 
+# Limiting records
 # create dataframe with only events that had health or damage consequence
 df <- subset(stormData, (rowSums(
     stormData[, c("FATALITIES", "INJURIES", "CROPDMG","PROPDMG")]))>0,
     select = c(EVTYPE, FATALITIES, INJURIES, PROPDMG, PROPDMGEXP, CROPDMG,
                CROPDMGEXP, REMARKS, REFNUM))
+# 254633 obs
+
+##------------------------------------------------------------------------------
+# Calculate Damage
+# [""] = multiply DMG by 1
+# [0] = multiply DMG by 1 (examining the data entries of '0' may be mistakes
+#       with larger exps desired, but there is no way to tell for every entry
+#       which exponent was meant to be entered.  Rather than entering '0' for
+#       damage i am opting to retain the dollar amount entered in these cases)
+# [k/K] = multiply DMG by 1,000
+# [m/M] = multiply DMG by 1,000,000
+# [b/B] = multiply DMG by 1,000,000,000
+# [?, -,+, 2,3, 4, 5, 6, 7, h, H] = multiply DMG by 1 - impossible to tell
+#       what exponent desired
+
+# Start DMGDLRS off by copying the DMG amts
+df$PROPDMGDLRS <- df$PROPDMG
+df$CROPDMGDLRS <- df$CROPDMG
+
+# Calculate the EXPs
+# Bs
+index <- grep("b", df$PROPDMGEXP, ignore.case = TRUE)
+df$PROPDMGDLRS[index] <- (df$PROPDMG[index] * 1000000000)
+
+index <- grep("b", df$CROPDMGEXP, ignore.case = TRUE)
+df$CROPDMGDLRS[index] <- (df$CROPDMG[index] * 1000000000)
+
+# Ms
+index <- grep("m", df$PROPDMGEXP, ignore.case = TRUE)
+df$PROPDMGDLRS[index] <- (df$PROPDMG[index] * 1000000)
+
+index <- grep("m", df$CROPDMGEXP, ignore.case = TRUE)
+df$CROPDMGDLRS[index] <- (df$CROPDMG[index] * 1000000)
+
+# Ks
+index <- grep("k", df$PROPDMGEXP, ignore.case = TRUE)
+df$PROPDMGDLRS[index] <- (df$PROPDMG[index] * 1000)
+
+index <- grep("k", df$CROPDMGEXP, ignore.case = TRUE)
+df$CROPDMGDLRS[index] <- (df$CROPDMG[index] * 1000)
+
+# Property and Crop Damage totals
+df$TOTDMGDLRS <- df$PROPDMGDLRS + df$CROPDMGDLRS
+
+##------------------------------------------------------------------------------
+# Categorizing EVTYPES
 
 # Official EVTYPES - types in the Storm Data Event Table, pg 6 of
 # https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf
@@ -62,18 +104,26 @@ EVT2 <- gsub("[^[:alnum:]]", "", EVT2)
 # combine the EVT vectors
 EVT <- cbind.data.frame(EVT, EVT2, stringsAsFactors = FALSE)
 
+# set up new column in df for event types without punctuation or capitalization
+df$EVTYPE2 <- tolower(df$EVTYPE)
+df$EVTYPE2 <- gsub("[^[:alnum:]]", "", df$EVTYPE2)
 
-# # remove whitespace around EVTYPE
-# df$EVTYPE <- trimws(df$EVTYPE)
+# merge EVT and df
+df <- merge(x=df, y=EVT, by.x = "EVTYPE2", by.y = "EVT2", all.x = TRUE)
+# 172960 events categorized, 81673 need categorizing
+
+# one row has a question mark for EVTYPE.  Cannot categorize it, so remove it
+df <- df[!(df$EVTYPE=="?"),]
+
+
+
+# df2 <- df[!is.na(df$EVT),]
 #
 # # making new dataframe with semi-exact matches of EVTYPE to the official EVT
 # df2 <- df[(grep(paste(EVT,collapse="|"), df$EVTYPE, ignore.case = TRUE,
 #                 value = FALSE)), ]
 #
-#
-# # add 'EVT' to df to hold official event category
-# # if exact match except for case:
-# # df$EVT <- trimws(df$EVTYPE)
+
 #
 #
 # # subset data for just events causing propety damage, and events causing
