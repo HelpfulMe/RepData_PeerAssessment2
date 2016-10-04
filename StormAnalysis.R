@@ -110,15 +110,28 @@ df$EVTYPE2 <- gsub("[^[:alnum:]]", "", df$EVTYPE2)
 
 # merge EVT and df
 df <- merge(x=df, y=EVT, by.x = "EVTYPE2", by.y = "EVT2", all.x = TRUE)
-# 172960 events categorized, 81673 need categorizing
+
+#-------------------------------------------------------------------------------
+# Cleaning event types - find events, assign them cleaned up event types
+
+# # "Storm Surge/Tide"
+# index <- grep("stormsurge", df$EVTYPE2, ignore.case = TRUE)
+# df$EVT[index] <- "Storm Surge/Tide"
+#
+# # "Hurricane (Typhoon)"
+# index <- grep("hurri", df$EVTYPE2, ignore.case = TRUE)
+# df$EVT[index] <- ("Hurricane (Typhoon)")
+#
+# index <- grep("typhoon", df$EVTYPE2, ignore.case = TRUE)
+# df$EVT[index] <- ("Hurricane (Typhoon)")
+
+# events that need categories
+x <- subset(df, is.na(df$EVT))
+y <- sort(unique(x$EVTYPE2))  # unique non-matching categories
 
 # one row has a question mark for EVTYPE.  Cannot categorize it, so remove it
-df <- df[!(df$EVTYPE=="?"),]
+# df <- df[!(df$EVTYPE=="?"),]
 
-
-
-# df2 <- df[!is.na(df$EVT),]
-#
 # # making new dataframe with semi-exact matches of EVTYPE to the official EVT
 # df2 <- df[(grep(paste(EVT,collapse="|"), df$EVTYPE, ignore.case = TRUE,
 #                 value = FALSE)), ]
