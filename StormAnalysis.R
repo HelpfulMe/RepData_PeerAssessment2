@@ -123,16 +123,7 @@ index <- intersect(grep("stormsurge", df$EVTYPE2, ignore.case = TRUE),
 df$EVT[index] <- "Storm Surge/Tide"
 
 # "Hurricane (Typhoon)"
-index <- intersect(grep("hurri", df$EVTYPE2, ignore.case = TRUE),
-                   which(is.na(df$EVT)))
-df$EVT[index] <- ("Hurricane (Typhoon)")
-
-index <- intersect(grep("typhoon", df$EVTYPE2, ignore.case = TRUE),
-                   which(is.na(df$EVT)))
-df$EVT[index] <- ("Hurricane (Typhoon)")
-
-# "Hurricane (Typhoon)"
-index <- intersect(grep("hurri", df$EVTYPE2, ignore.case = TRUE),
+index <- intersect(grep("hurri|typhoon", df$EVTYPE2, ignore.case = TRUE),
                    which(is.na(df$EVT)))
 df$EVT[index] <- ("Hurricane (Typhoon)")
 
@@ -151,11 +142,27 @@ index <- intersect(grep("flood", df$EVTYPE2, ignore.case = TRUE),
                    which(is.na(df$EVT)))
 df$EVT[index] <- ("Flood")
 
+# "Hail"
+index <- intersect(grep("hail", df$EVTYPE2, ignore.case = TRUE),
+                   which(is.na(df$EVT)))
+df$EVT[index] <- ("Hail")
+
+# "Heavy Rain"
+index <- intersect(grep("heavyrai", df$EVTYPE2, ignore.case = TRUE),
+                   which(is.na(df$EVT)))
+df$EVT[index] <- ("Heavy Rain")
+
+# "Wildfire"
+index <- intersect(grep("fire", df$EVTYPE2, ignore.case = TRUE),
+                   which(is.na(df$EVT)))
+df$EVT[index] <- ("Wildfire")
+
 # "Thunderstorm Wind"
-index <- intersect(grep("thunderstormw", df$EVTYPE2, ignore.case = TRUE),
+index <- intersect(grep("thunderstormw|tstmw|thunderstormsw|thundertormw|
+                        thunderestormw|thunderstromwind", df$EVTYPE2,
+                        ignore.case = TRUE),
                    which(is.na(df$EVT)))
 df$EVT[index] <- ("Thunderstorm Wind")
-
 
 # events that need categories
 x <- subset(df, is.na(df$EVT))
