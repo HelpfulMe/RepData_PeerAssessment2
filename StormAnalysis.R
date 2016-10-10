@@ -263,4 +263,5 @@ y <- sort(unique(x$EVTYPE2))  # unique non-matching categories
 # Stop the clock
 elapsed <- proc.time() - ptm
 # no colclasses, loading data only: user = 174.04, system = 10.75, elapsed = 13830.68
-
+# full code, loading data and classifying: user = 314.40, system = 4.19, elapsed = 319.89
+# full code, without loading data: user = 20.84, system = 0.47, elapsed = 21.34
