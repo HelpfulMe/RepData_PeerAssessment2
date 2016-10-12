@@ -148,11 +148,6 @@ index <- intersect(grep("hail", df$EVTYPE2, ignore.case = TRUE),
                    which(is.na(df$EVT)))
 df$EVT[index] <- ("Hail")
 
-# "Heavy Rain"
-index <- intersect(grep("heavyrai", df$EVTYPE2, ignore.case = TRUE),
-                   which(is.na(df$EVT)))
-df$EVT[index] <- ("Heavy Rain")
-
 # "Wildfire"
 index <- intersect(grep("fire", df$EVTYPE2, ignore.case = TRUE),
                    which(is.na(df$EVT)))
@@ -221,7 +216,7 @@ index <- intersect(grep("fog", df$EVTYPE2,
 df$EVT[index] <- ("Dense Fog")
 
 # "Winter Weather"
-index <- intersect(grep("winterwe", df$EVTYPE2,
+index <- intersect(grep("winterwe|freezingrain|freezingdrizzle", df$EVTYPE2,
                         ignore.case = TRUE), which(is.na(df$EVT)))
 df$EVT[index] <- ("Winter Weather")
 
@@ -235,10 +230,25 @@ index <- intersect(grep("ice|glaze", df$EVTYPE2,
                         ignore.case = TRUE), which(is.na(df$EVT)))
 df$EVT[index] <- ("Ice Storm")
 
+# "Heavy Rain"
+index <- intersect(grep("heavyrai|rain", df$EVTYPE2, ignore.case = TRUE),
+                   which(is.na(df$EVT)))
+df$EVT[index] <- ("Heavy Rain")
+
 # "Rip Current"
 index <- intersect(grep("rip", df$EVTYPE2,
                         ignore.case = TRUE), which(is.na(df$EVT)))
 df$EVT[index] <- ("Rip Current")
+
+# "Heat"
+index <- intersect(grep("warm", df$EVTYPE2,
+                        ignore.case = TRUE), which(is.na(df$EVT)))
+df$EVT[index] <- ("Heat")
+
+# "High Surf"
+index <- intersect(grep("highsurf", df$EVTYPE2,
+                        ignore.case = TRUE), which(is.na(df$EVT)))
+df$EVT[index] <- ("High Surf")
 
 # events that need categories
 x <- subset(df, is.na(df$EVT))
