@@ -252,17 +252,19 @@ df$EVT[index] <- ("High Surf")
 
 # events that need categories
 x <- subset(df, is.na(df$EVT))
-y <- sort(unique(x$EVTYPE2))  # unique non-matching categories
 
-# one row has a question mark for EVTYPE.  Cannot categorize it, so remove it
-# df <- df[!(df$EVTYPE=="?"),]
+# 431 observations still do not have standardized event types
+# these include 114 fatalities, 257 injuries, 30222040 dollars dmg
+# standardized are 15145 fatalities, 140528 injuries, 476422842480 dollars dmg
+# those not categorized are 0.75% of fatalities, 0.18% of all injuries, and 0.06% of all dmg
+# As we are only looking for the top causes of harm to human health and property, I will
+# continue without these
 
-# # making new dataframe with semi-exact matches of EVTYPE to the official EVT
-# df2 <- df[(grep(paste(EVT,collapse="|"), df$EVTYPE, ignore.case = TRUE,
-#                 value = FALSE)), ]
-#
+# fill in nonstandard event types for those who have not been standardized
+index <- which(is.na(df$EVT))
+df$EVT[index] <- df$EVTYPE[index]
 
-#
+
 #
 # # subset data for just events causing propety damage, and events causing
 # # health consequences
