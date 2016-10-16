@@ -33,9 +33,22 @@ if(!exists('stormData')){
 # create dataframe with only events that had health or damage consequence
 df <- subset(stormData, (rowSums(
     stormData[, c("FATALITIES", "INJURIES", "CROPDMG","PROPDMG")]))>0,
-    select = c(EVTYPE, FATALITIES, INJURIES, PROPDMG, PROPDMGEXP, CROPDMG,
-               CROPDMGEXP, REMARKS, REFNUM))
+    select = c(BGN_DATE, EVTYPE, FATALITIES, INJURIES, PROPDMG, PROPDMGEXP, 
+               CROPDMG, CROPDMGEXP, REMARKS, REFNUM))
 # 254633 obs
+
+# According to NOAA records, all event types were only logged starting in 1/1996
+# Since we want to compare all event types we only want the data from 1996
+# onwards.(see- http://www.ncdc.noaa.gov/stormevents/details.jsp?type=eventtype)
+
+# Start by converting the BGN_DATE column to a date format
+df$BGN_DATE <- as.Date(df$BGN_DATE, "%m/%d/%Y")
+# Then pull just the year from the date and format as numeric
+df$BGN_DATE <- as.numeric(format(df$BGN_DATE,"%Y"))
+# Now we can subset the dataframe to rows with a date equal to or greater than
+# 1996
+df <- subset(df, BGN_DATE >= 1996)
+# 201318 obs
 
 ##------------------------------------------------------------------------------
 # Calculate Damage
