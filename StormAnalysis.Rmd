@@ -1,0 +1,75 @@
+---
+title: "Weather Event Impact on Human Life and Property from 1996 to 2011"
+author: "Becca Smith"
+date: "October 16, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Synopsis
+The goal of this analysis document is to explore the National Oceanic Atmospheric Administration's (NOAA) storm event data from 1996 to 2011 to discover:  
+1. Across the United States, which types of events (as indicated in the EVTYPE variable) were the most harmful with respect to population health? and  
+2. Across the United States, which types of events had the greatest economic consequences?
+
+This analysis presents findings showing that excessive heat and tornados caused the most fatalities from 
+1996 to 2011, while tornados, floods, and excessive heat caused the most injuries.  The largest economic damage was caused by floods, with hurricanes/ 
+typhoons and storm surges/ tide damage also causing large amounts of damage.
+
+# Data Processing
+I obtained the National Oceanic Atmospheric Administration's (NOAA) storm event data beginning in 1950 and ending in November 2011.
+
+```{r obtainingdata}
+# See if data file is in working directory.  If not, get it
+if(!file.exists("repdata%2Fdata%2FStormData.csv.bz2")) {
+    fileURL <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
+    download.file(fileURL, "repdata%2Fdata%2FStormData.csv.bz2")
+}
+```
+
+Next I read the data into R using read.csv.
+```{r readingdata, cache=TRUE}
+# See if data read into R.  If not, read it.
+if(!exists('stormData')){
+    # read data
+    stormData <- read.csv("repdata%2Fdata%2FStormData.csv.bz2", header = TRUE,
+                          stringsAsFactors = FALSE, na.strings = "NA")
+}
+```
+
+## Data Transformations (with description and justification)
+This is a large dataset.  Here are the dimensions: 
+```{r dimstormData}
+dim(stormData)
+```
+
+To make it easier to work with, I removed rows that do not contain any property damage, crop damage, fatalities, or injuries and limited the columns to those most relevant.
+```{r removeharmless, cache=TRUE}
+# create dataframe with only events that had health or damage consequence
+df <- subset(stormData, (rowSums(
+    stormData[, c("FATALITIES", "INJURIES", "CROPDMG","PROPDMG")]))>0,
+    select = c(BGN_DATE, EVTYPE, FATALITIES, INJURIES, PROPDMG, PROPDMGEXP, 
+               CROPDMG, CROPDMGEXP, REMARKS, REFNUM))
+dim(df)
+```
+
+According to NOAA records, information regarding all event types was only tracked starting in 1/1996.  Earlier than that only tornado and a few select other event types were recorded (http://www.ncdc.noaa.gov/stormevents/details.jsp?type=eventtype).  Since I want to compare all event types I removed the events from earlier than  1996. 
+```{r after1996, cache=TRUE}
+# Start by converting the BGN_DATE column to a date format
+df$BGN_DATE <- as.Date(df$BGN_DATE, "%m/%d/%Y")
+# Then pull just the year from the date and format as numeric
+df$BGN_DATE <- as.numeric(format(df$BGN_DATE,"%Y"))
+# Now we can subset the dataframe to rows with a date equal to or greater than
+# 1996
+df <- subset(df, BGN_DATE >= 1996)
+dim(df)
+```
+# Results
+** Instructions **
+There should be a section titled Results in which your results are presented.
+
+# Analysis
+The analysis document must have at least one figure containing a plot.
+Your analysis must have no more than three figures. Figures may have multiple plots in them (i.e. panel plots), but there cannot be more than three figures total.
