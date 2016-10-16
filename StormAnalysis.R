@@ -57,10 +57,11 @@ df <- subset(df, BGN_DATE >= 1996)
 #       with larger exps desired, but there is no way to tell for every entry
 #       which exponent was meant to be entered.  Rather than entering '0' for
 #       damage i am opting to retain the dollar amount entered in these cases)
+# [h/H] = multiply DMG by 100
 # [k/K] = multiply DMG by 1,000
 # [m/M] = multiply DMG by 1,000,000
 # [b/B] = multiply DMG by 1,000,000,000
-# [?, -,+, 2,3, 4, 5, 6, 7, h, H] = multiply DMG by 1 - impossible to tell
+# [?, -,+, 2,3, 4, 5, 6, 7] = multiply DMG by 1 - impossible to tell
 #       what exponent desired
 
 # Start DMGDLRS off by copying the DMG amts
@@ -88,6 +89,13 @@ df$PROPDMGDLRS[index] <- (df$PROPDMG[index] * 1000)
 
 index <- grep("k", df$CROPDMGEXP, ignore.case = TRUE)
 df$CROPDMGDLRS[index] <- (df$CROPDMG[index] * 1000)
+
+# Hs
+index <- grep("h", df$PROPDMGEXP, ignore.case = TRUE)
+df$PROPDMGDLRS[index] <- (df$PROPDMG[index] * 100)
+
+index <- grep("h", df$CROPDMGEXP, ignore.case = TRUE)
+df$CROPDMGDLRS[index] <- (df$CROPDMG[index] * 100)
 
 # Property and Crop Damage totals
 df$TOTDMGDLRS <- df$PROPDMGDLRS + df$CROPDMGDLRS
